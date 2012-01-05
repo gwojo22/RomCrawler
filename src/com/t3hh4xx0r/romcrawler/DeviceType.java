@@ -15,15 +15,16 @@ public enum DeviceType {
 	   PASSION("http://rootzwiki.com/forum/75-nexus-one-developer-forum"),
 	   PYRAMID("http://rootzwiki.com/forum/88-sensation-4g-development-forum"),
 	   BIONIC("http://rootzwiki.com/forum/82-droid-bionic-developer-forum"),
-	   ATRIX("http://rootzwiki.com/forum/44-atrix-developer-forum"),
-	   RAZR("http://rootzwiki.com/forum/338-droid-razr-developer-forum"),
-	   CAPTIVATE("http://rootzwiki.com/forum/69-captivate-developer-forum"),
-	   VIBRANT("http://rootzwiki.com/forum/94-vibrant-developer-forum"),
+	   OLYMPUS("http://rootzwiki.com/forum/44-atrix-developer-forum"),
+	   CDMA_SPYDER("http://rootzwiki.com/forum/338-droid-razr-developer-forum"),
 	   MECHA("http://rootzwiki.com/forum/12-thunderbolt-developer-forum"),
 	   MAGURO("http://rootzwiki.com/forum/230-gsm-galaxy-nexus-developer-forum"),
-	   DROID2("http://rootzwiki.com/forum/15-droid-2r2d2-developer-forum"),
-	   DROID2WE("http://rootzwiki.com/forum/76-droid-2-global-developer-forum"),
-	   SHADOW("http://rootzwiki.com/forum/16-droid-x-developer-forum");	   
+	   SHOLES("http://http://rootzwiki.com/forum/28-droid-1-developer-forum/"),
+	   CDMA_DROID2("http://rootzwiki.com/forum/15-droid-2r2d2-developer-forum"),
+	   CDMA_DROID2WE("http://rootzwiki.com/forum/76-droid-2-global-developer-forum"),
+	   CRESPO("http://http://rootzwiki.com/forum/32-nexus-s-developer-forum/"),
+	   CRESPO4G("http://rootzwiki.com/forum/140-nexus-s-4g-developer-forum/"),
+	   CDMA_SHADOW("http://rootzwiki.com/forum/16-droid-x-developer-forum");	   
 
 
 	    private final String forumUrl;
