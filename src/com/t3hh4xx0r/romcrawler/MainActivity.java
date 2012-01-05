@@ -4,9 +4,13 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,8 +33,7 @@ public class MainActivity extends Activity {
     ArrayList<String> threadArray;
     ArrayList<String> authorArray;
     String message;
-    String threadTitle = null;
-    
+    String threadTitle = null;    
 
 	/** Called when the activity is first created. */
     @Override
@@ -68,15 +71,15 @@ public class MainActivity extends Activity {
         }
     
     public void getDevice() {
-    	Constants.DEVICE = android.os.Build.DEVICE.toUpperCase();
+    	String device = android.os.Build.DEVICE.toUpperCase();
     	try {
-    		DeviceType type = Enum.valueOf(DeviceType.class, Constants.DEVICE);
+    		DeviceType type = Enum.valueOf(DeviceType.class, device);
+    		Constants.DEVICE = type.name();
     		Constants.FORUM = type.getForumUrl();
-    		message = Constants.FORUM;
     	} catch (IllegalArgumentException e) {
     		message = "Device not found/supported!";
+        	makeToast(message);
     	}
-    	makeToast(message);
     }
     
     private ArrayList<TitleResults> getTitles(){
@@ -99,24 +102,21 @@ public class MainActivity extends Activity {
 						while ((inputLine = in.readLine()) != null)
 							whole.append(inputLine);
 						in.close();
-					} catch (IOException e) {
-						Log.e("POC", e.getMessage());
-					} finally {
+					} catch (IOException e) {}
+					finally {
 						urlConnection.disconnect();
 					}
-				} catch (Exception e) {
-					Log.e("POC", e.getMessage());
-				}
-				Document doc = Parser.parse(whole.toString(), Constants.FORUM);
+				} catch (Exception e) {}
+				Document doc = Parser.parse(whole.toString().replaceAll("<!-- end ad tag -->?.*?<!-- BEGIN TOPICS -->", ""), Constants.FORUM);
 				Elements threads = doc.select(".topic_title");
 		       	Elements authors = doc.select("a[hovercard-ref]");
 	      		for (Element author : authors) {
 	       			authorArray.add(author.text());
 	      		}
 	      		cleanAuthors();
-
 	       		for (Element thread : threads) {
 	       			titleArray =  new TitleResults();
+	       			Log.d("POC", thread.toString());
 
 	       			titleArray.setAuthorDate(authorArray.get(0));
 	       			authorArray.remove(0);
@@ -145,7 +145,7 @@ public class MainActivity extends Activity {
 
     public void cleanAuthors() {
         ArrayList<String> tmpArray = new ArrayList<String>();
-		for (int i=2; i<authorArray.size(); i++) {
+		for (int i=0; i<authorArray.size(); i++) {
 	        tmpArray.add(authorArray.get(i));
 		}
 		authorArray = new ArrayList<String>();
