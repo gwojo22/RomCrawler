@@ -21,8 +21,15 @@ import com.commonsware.cwac.merge.MergeAdapter;
 
 import android.app.ListActivity;
 import android.app.DownloadManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -30,6 +37,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,26 +51,63 @@ public class ThreadActivity extends ListActivity  {
     String message;
     MainActivity mainActivity;
     String threadTitle = null;
+    ProgressBar pB;
+    ListView lv1;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle); 
+        setContentView(R.layout.main);
 
+        lv1 = (ListView) findViewById(android.R.id.list);
+        pB = (ProgressBar) findViewById(R.id.progressBar1);
+        
         getNameThread = new Thread();
         linkArray = new ArrayList<String>();
         adapter = new MergeAdapter();
         Bundle extras = getIntent().getExtras();
-        threadTitle = extras.getString("title");
+        try {
+        	threadTitle = extras.getString("title");
+        } catch (Exception e) {
+        	
+        }
+    	new CreateArrayListTask().execute("poop");
 
-	    try {
-	    	getNames();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		createUI();
+
+	    BroadcastReceiver receiver = new BroadcastReceiver() {
+	            @Override
+	            public void onReceive(Context context, Intent intent) {
+	                String action = intent.getAction();
+	                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+	                    long downloadId = intent.getLongExtra(
+	                            DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+	                    
+	        		 	String ns = Context.NOTIFICATION_SERVICE;
+	        		 	NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(ns);
+
+	        		 	int icon = R.drawable.ic_launcher;        // icon from resources
+	        		 	CharSequence tickerText = "Download ready!";              // ticker-text
+	        		 	long when = System.currentTimeMillis();         // notification time
+	        		 	CharSequence contentTitle = "OMG";  // expanded message title
+	        		 	CharSequence contentText = "Your download is finished!";      // expanded message text
+
+	        		 	Intent notificationIntent = new Intent(context, ThreadActivity.class);
+
+	        		 	PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+	        		 	
+	        			Notification notification = new Notification(icon, tickerText, when);
+	        			notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+	        			notification.defaults |= Notification.DEFAULT_VIBRATE;
+	        			final int HELLO_ID = 1;
+	        			 
+	        			mNotificationManager.notify(HELLO_ID, notification);
+	                }
+	            }
+	    };
+	    
+        registerReceiver(receiver, new IntentFilter(
+                DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
     
     @Override
@@ -72,6 +117,9 @@ public class ThreadActivity extends ListActivity  {
         Log.d("POC", linkURL + " " + position);
         String[] bits = linkURL.split("/");
 		String zipName = bits[bits.length-1];
+		if (zipName.startsWith("download.php?=")) {
+			zipName.replace("download.php?=", "");
+    	}
         File f = new File(Constants.extSD + "/" + "t3hh4xx0r/romCrawler/" + zipName);
         if (!f.exists()) {
         	f.mkdirs();
@@ -89,16 +137,13 @@ public class ThreadActivity extends ListActivity  {
     }
     
     private ArrayAdapter<String> buildList(ArrayList<String> linkArray) {
-		for (Iterator<String> c = linkArray.iterator(); c.hasNext();) {
-			Log.d("POC", (String)c.next());
-		}
         return(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, linkArray));
       }
     
-	public void getNames() throws IOException, InterruptedException {
-		Thread getNameThread = new Thread() {
-			public void run() {
-				try {
+    private class CreateArrayListTask extends AsyncTask<String, Void, ArrayList<String>> {               
+		@Override
+		protected ArrayList<String> doInBackground(String... params) {
+			try {
 			        linkArray = new ArrayList<String>();
 					URL url = new URL(Constants.THREADURL);
 					URLConnection con = url.openConnection();
@@ -120,8 +165,9 @@ public class ThreadActivity extends ListActivity  {
 						String[] parts = trimmed.split("\n");
 						String lastWord = parts[parts.length - 1] + ".zip";
 						strClean = new String(strClean.replace(lastWord, ""));
-						linkArray.add(lastWord);
-					}
+						if (!lastWord.contains(" ")) {
+							linkArray.add(lastWord);
+						}					}
 					Document doc = Jsoup.connect(Constants.THREADURL).get();
         			Elements links = doc.select("a[href]");
     				for (Element link : links) {
@@ -135,14 +181,21 @@ public class ThreadActivity extends ListActivity  {
    							linkArray.add(link.attr("abs:href"));
    						}
    					}
+    				if (linkArray.isEmpty()) {
+    					String warning = "No direct links detected. Please have your rom dev switch to dev-host.org for their hosting.\nIts free and provides direct links to all downloads.";
+    					linkArray.add(warning);
+    				}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
-		};
-		getNameThread.start();
-		getNameThread.join();
-		setUI();
+			return linkArray;
+		}
+			
+		       protected void onPostExecute(ArrayList<String> linkArray) {
+		    	    setUI();
+		    	    createUI();
+		        	pB.setVisibility(View.GONE);        	
+		        }
 	} 	
     
 	@SuppressWarnings({ "unchecked", "rawtypes" })

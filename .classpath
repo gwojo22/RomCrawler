@@ -6,6 +6,6 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="lib" path="/home/r2doesinc/eclipse/workspace/RomCrawler/assets/CWAC-SackOfViewsAdapter.jar"/>
 	<classpathentry kind="lib" path="/home/r2doesinc/eclipse/workspace/RomCrawler/assets/jsoup-1.6.1.jar"/>
-	<classpathentry kind="lib" path="/home/r2doesinc/eclipse/workspace/RomCrawler/assets/GoogleAdMobAdsSdk-4.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/r2doesinc/eclipse/workspace/RomCrawler/assets/pontiflex_sdk.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

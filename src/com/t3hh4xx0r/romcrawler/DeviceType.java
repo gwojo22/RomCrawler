@@ -14,7 +14,7 @@ public enum DeviceType {
 	   DOUBLESHOT("http://rootzwiki.com/forum/142-mytouch-4g-slide-developer-forum"),
 	   PASSION("http://rootzwiki.com/forum/75-nexus-one-developer-forum"),
 	   PYRAMID("http://rootzwiki.com/forum/88-sensation-4g-development-forum"),
-	   BIONIC("http://rootzwiki.com/forum/82-droid-bionic-developer-forum"),
+	   CDMA_TARGA("http://rootzwiki.com/forum/82-droid-bionic-developer-forum"),
 	   OLYMPUS("http://rootzwiki.com/forum/44-atrix-developer-forum"),
 	   CDMA_SPYDER("http://rootzwiki.com/forum/338-droid-razr-developer-forum"),
 	   MECHA("http://rootzwiki.com/forum/12-thunderbolt-developer-forum"),

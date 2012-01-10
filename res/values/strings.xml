@@ -3,5 +3,7 @@
 
     <string name="hello">Hello World, POCActivity!</string>
     <string name="app_name">Rom Crawler</string>
+    <string name="upgrade">Upgrade to premium</string>
+    <string name="apps">View other apps.</string>
 
 </resources>

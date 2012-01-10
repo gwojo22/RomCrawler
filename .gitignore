@@ -1,4 +1,3 @@
-AndroidManifest.xml
-res/layout/main.xml
 gen
 bin
+assets/AppInfo.json
